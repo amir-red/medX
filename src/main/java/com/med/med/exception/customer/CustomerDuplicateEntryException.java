@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class CustomerDuplicateEntryException extends RuntimeException{
 
     public CustomerDuplicateEntryException(String id) {
-        super("Customer Exception: " + id);
+        super("CustomerModel Exception: " + id);
     }
 }

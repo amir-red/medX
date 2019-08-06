@@ -6,7 +6,7 @@ package com.med.med.exception.customer;
 
 public class CustomerNotFoundException extends RuntimeException {
 
-    CustomerNotFoundException(Long id) {
+    public CustomerNotFoundException(String id) {
         super("Could not find customer " + id);
     }
 

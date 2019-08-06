@@ -10,4 +10,6 @@ public interface CustomerService {
     List<Customer> findAll();
 
     ResponseEntity addvertile(Customer customer);
+
+    ResponseEntity addprestaShopId(String vertileId, String prestaShopId);
 }

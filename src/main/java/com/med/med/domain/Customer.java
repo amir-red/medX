@@ -23,7 +23,7 @@ public class Customer {
         return id;
     }
 
-    public void setId(long id) {
+    public void Id(long id) {
         this.id = id;
     }
 

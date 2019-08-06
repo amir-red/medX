@@ -2,12 +2,12 @@ package com.med.med.service;
 
 import com.med.med.domain.Customer;
 import com.med.med.exception.customer.CustomerDuplicateEntryException;
+import com.med.med.exception.customer.CustomerNotFoundException;
 import com.med.med.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -29,6 +29,18 @@ public class CustomerServiceImpl implements CustomerService {
             return ResponseEntity.ok(customer1);
         } catch (RuntimeException e){
             throw new CustomerDuplicateEntryException("Duplicate Entry");
+        }
+    }
+
+    @Override
+    public ResponseEntity addprestaShopId(String vertileId, String prestaShopId) {
+        final Customer customer;
+        try{
+            customer = customerRepository.findByVertileId(vertileId);
+            customer.setPrestashopId(prestaShopId);
+            return ResponseEntity.ok(customerRepository.save(customer));
+        } catch (RuntimeException e){
+            throw new CustomerNotFoundException("Duplicate Not Found");
         }
     }
 
