@@ -19,10 +19,10 @@ public class Ping {
 
             code = connection.getResponseCode();
             if (code == 200) {
-                result = "-> Green <-\t" + "Code: " + code;
-                ;
+                result = ""+code;
+
             } else {
-                result = "-> Yellow <-\t" + "Code: " + code;
+                result = "" + code;
             }
         } catch (Exception e) {
             result = "-> Red <-\t" + "Wrong domain - Exception: " + e.getMessage();

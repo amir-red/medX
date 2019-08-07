@@ -4,11 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.med.med.domain.Customer;
+import com.med.med.domain.InvoiceAddress;
 import com.med.med.domain.models.Brand.BrandModel;
 import com.med.med.domain.models.CustomerModel;
 import com.med.med.exception.customer.CustomerDuplicateEntryException;
 import com.med.med.service.APIService.APIService;
 import com.med.med.service.CustomerService;
+import com.med.med.service.InvoiceAddressService;
+import com.med.med.utilities.Java2XML;
 import com.med.med.utilities.Ping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -46,6 +49,7 @@ public class CustomerController {
 
 
 
+
     /*
     * URL: /api/v1/vertile/{vertileId}
     * Method: GET
@@ -68,12 +72,14 @@ public class CustomerController {
     public Mono<CustomerModel> getCustomerByVertileId(@PathVariable String vertileId){
 
         Ping ping = new Ping();
+        Java2XML java2XML = new Java2XML();
         Mono<CustomerModel> customerModel = apiService
                 .getCustomer(vertileId)
                 .doOnNext(res -> {
                     System.out.println("doOnNext: ---> Frist");
                     Mono<BrandModel> brand = apiService.
-                            getBrandByBrandId(res.getBrandId());
+                            getBrandByBrandId(res.getBrandId())
+                            .doOnError(err -> System.out.println("brand ID not found"));
                             brand.subscribe(b ->{
                                 System.out.println("doOnNext: ---> second");
                                 ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
@@ -86,12 +92,20 @@ public class CustomerController {
                                 System.out.println(json);
 
                                 try {
-                                    System.out.println(ping.getStatus(b.getPrestashopInfo().getPRESTASHOP_BASE_URL(),b.getPrestashopInfo().getPRESTASHOP_USERNAME_KEY()));
+                                    String result = ping.getStatus(b.getPrestashopInfo().getPRESTASHOP_BASE_URL(),b.getPrestashopInfo().getPRESTASHOP_USERNAME_KEY());
+                                    System.out.println(result);
+                                    if(result.equals("200")){
+                                        InvoiceAddress veritaliCustomer1 = new InvoiceAddress(res.getFirst_name(),res.getLast_name());
+
+                                        java2XML.jaxbObjectToXML(veritaliCustomer1);
+
+                                    }else{
+                                        System.out.println("Ping result ==========================>"+result);
+                                    }
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                             });
-
                 })
                 .doOnError(err -> System.out.println("Outer Errorrrrrrrrrrr"));;
 
